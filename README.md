@@ -1,1 +1,0 @@
-# BrainTumorSeg3D
