@@ -2,3 +2,5 @@
 /data/raw_gli/
 .synapseConfig
 .DS_Store
+__pycache__/
+wandb/
