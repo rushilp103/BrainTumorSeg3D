@@ -13,7 +13,7 @@ def download_brats_data():
     gli_folder_id = "syn59059776"
 
     # 4. Define our target directory based on our project blueprint
-    target_dir = "./data/raw_gli/"
+    target_dir = "./data/"
     os.makedirs(target_dir, exist_ok=True)
 
     print(f"Initiating bulk download for folder {gli_folder_id}...")

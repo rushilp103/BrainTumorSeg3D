@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib.colors import BoundaryNorm, ListedColormap
 
 PATIENT_ID = "BraTS-GLI-00009-100"
-DATA_ROOT = Path("./data/raw_gli/training_data1_v2")
+DATA_ROOT = Path("./data/training_data1_v2")
 
 MODALITY_SUFFIXES = {
     "t1": "t1n",
