@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 
 from monai.data import DataLoader, Dataset
@@ -55,6 +56,21 @@ def build_data_list(data_root: Path = DATA_ROOT) -> list[dict[str, str]]:
     return data_list
 
 
+def split_holdout_data_list(
+    data_list: list[dict[str, str]],
+    val_fraction: float = 0.2,
+    seed: int = 42,
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    sorted_list = sorted(data_list, key=lambda entry: Path(entry[LABEL_KEY]).parent.name)
+    shuffled = sorted_list.copy()
+    random.Random(seed).shuffle(shuffled)
+
+    val_count = max(1, int(len(shuffled) * val_fraction))
+    val_list = shuffled[-val_count:]
+    train_list = shuffled[:-val_count]
+    return train_list, val_list
+
+
 def get_train_transforms(patch_size: tuple[int, int, int] = PATCH_SIZE) -> Compose:
     all_keys = IMAGE_KEYS + [LABEL_KEY]
 
@@ -72,6 +88,22 @@ def get_train_transforms(patch_size: tuple[int, int, int] = PATCH_SIZE) -> Compo
                 roi_size=patch_size,
                 random_size=False,
             ),
+            EnsureTyped(keys=["image", LABEL_KEY], data_type="tensor"),
+        ]
+    )
+
+
+def get_val_transforms() -> Compose:
+    all_keys = IMAGE_KEYS + [LABEL_KEY]
+
+    return Compose(
+        [
+            LoadImaged(keys=all_keys),
+            EnsureChannelFirstd(keys=all_keys),
+            ConcatItemsd(keys=IMAGE_KEYS, name="image", dim=0),
+            DeleteItemsd(keys=IMAGE_KEYS),
+            CropForegroundd(keys=["image", LABEL_KEY], source_key="image"),
+            NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
             EnsureTyped(keys=["image", LABEL_KEY], data_type="tensor"),
         ]
     )

@@ -20,7 +20,7 @@ def build_model() -> UNet:
 
 
 def build_loss() -> DiceCELoss:
-    return DiceCELoss(to_onehot_y=False, softmax=True)
+    return DiceCELoss(to_onehot_y=False, sigmoid=True)
 
 
 if __name__ == "__main__":
