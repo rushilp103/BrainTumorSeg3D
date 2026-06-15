@@ -83,11 +83,11 @@ Each patient directory contains five NIfTI (`.nii.gz`) volumes:
 
 ## Technical Challenges Overcome
 
-**The Activate Function Issue:** Initial training runs used a Mutually Exclusive Softmax activation, which resulted in a severe class imbalance. Since 98% of the brain MRI is empty background and the model utilized 3 output channels (no dedicated background channel), the Softmax constraint forced the network to generate false positives, dropping the Whole Tumor Dice score to 3.2%
+**The Activate Function Issue:** Initial training runs used a Mutually Exclusive Softmax activation, which resulted in a severe class imbalance. Since 98% of the brain MRI is empty background and the model utilized 3 output channels (no dedicated background channel), the Softmax constraint forced the network to generate false positives, dropping the Whole Tumor Dice score to 3.3%
 
 **The Solution:** Transitioned the architecture to utilize independent probability mapping using Sigmoid activations. This successfully decoupled the channels, allowing the network to accurately output near-zero probabilities for background voxels. This correction boosted the Whole Tumor Dice score to 88.2%
 
-![Softmax vs Sigmoid Training Loss](results/dice_scores_sigmoid_vs_softmax.png)
+![Softmax vs Sigmoid Training Loss](results/train_loss_sigmoid_vs_softmax.png)
 
 
 ## Setup
@@ -133,6 +133,7 @@ Evaluated on **270 validation cases** (20% holdout from 1,350 total) using the t
 | Tumor Core (TC)      | 0.619     |
 | Enhancing Tumor (ET) | 0.627     |
 
+![Dice Score Improvements](results/dice_scores_sigmoid_vs_softmax.png)
 
 The model achieves strong whole-tumor overlap (Dice > 0.85) but lower scores on the smaller, harder-to-segment tumor core and enhancing regions. Further improvements could come from longer training, stronger augmentation, mixed-precision optimization, or a self-configuring framework such as nnU-Net.
 
